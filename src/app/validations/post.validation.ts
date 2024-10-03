@@ -48,6 +48,9 @@ export const updatePostValidationSchema = z.object({
 });
 
 export const addCommentValidationSchema = z.object({
+  userId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
+    message: 'Invalid user ID!',
+  }),
   comment: z
     .string()
     .min(1, { message: 'Comment cannot be empty!' })
@@ -55,6 +58,12 @@ export const addCommentValidationSchema = z.object({
 });
 
 export const voteValidationSchema = z.object({
+  userId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
+    message: 'Invalid user ID!',
+  }),
+});
+
+export const softDeleteValidationSchema = z.object({
   userId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
     message: 'Invalid user ID!',
   }),

@@ -17,6 +17,10 @@ const CommentSchema = new Schema<IComment>(
       type: Date,
       default: Date.now,
     },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   { _id: false }
 );
@@ -68,6 +72,15 @@ const PostSchema = new Schema<IPost>(
       default: 0,
       min: 0,
     },
+    viewCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
+    isDeleted: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
@@ -78,7 +91,7 @@ PostSchema.index({ upvotes: 1 });
 PostSchema.index({ downvotes: 1 });
 
 PostSchema.statics.findByAuthor = function (authorId: mongoose.Types.ObjectId) {
-  return this.find({ author: authorId });
+  return this.find({ author: authorId, isDeleted: false });
 };
 
 export const Post = mongoose.model<IPost, PostModel>('Post', PostSchema);
