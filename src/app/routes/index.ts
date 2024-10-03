@@ -1,10 +1,7 @@
 import { Router } from 'express';
+import { CommentRoutes } from './route/comment.route';
+import { PostRoutes } from './route/post.route';
 import { UserRoutes } from './route/user.route';
-// import { AuthRoutes } from './route/auth.route';
-// import { BookingRoutes } from './route/booking.route';
-// import { CarRoutes } from './route/car.route';
-// import { getUserRoutes } from './route/getUser.route';
-// import { UserRoutes } from './route/user.route';
 
 const router = Router();
 
@@ -13,6 +10,14 @@ const moduleRoutes = [
   {
     path: '/auth/signup',
     route: UserRoutes,
+  },
+  {
+    path: '/posts',
+    route: PostRoutes,
+  },
+  {
+    path: '/comments',
+    route: CommentRoutes,
   },
 ];
 

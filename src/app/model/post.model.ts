@@ -1,31 +1,7 @@
-import mongoose, { Schema } from 'mongoose';
-import { IComment, IPost, PostModel } from '../interface/post.interface';
+import { Schema, model } from 'mongoose';
+import { IPost } from '../interface/post.interface';
 
-const CommentSchema = new Schema<IComment>(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    comment: {
-      type: String,
-      required: true,
-      maxlength: 500,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
-    },
-    isDeleted: {
-      type: Boolean,
-      default: false,
-    },
-  },
-  { _id: false }
-);
-
-const PostSchema = new Schema<IPost>(
+const postSchema = new Schema<IPost>(
   {
     title: {
       type: String,
@@ -50,23 +26,28 @@ const PostSchema = new Schema<IPost>(
       maxlength: 2000,
     },
     author: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
     upvotes: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
       },
     ],
     downvotes: [
       {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
       },
     ],
-    comments: [CommentSchema],
+    comments: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Comment',
+      },
+    ],
     shares: {
       type: Number,
       default: 0,
@@ -87,11 +68,4 @@ const PostSchema = new Schema<IPost>(
   }
 );
 
-PostSchema.index({ upvotes: 1 });
-PostSchema.index({ downvotes: 1 });
-
-PostSchema.statics.findByAuthor = function (authorId: mongoose.Types.ObjectId) {
-  return this.find({ author: authorId, isDeleted: false });
-};
-
-export const Post = mongoose.model<IPost, PostModel>('Post', PostSchema);
+export const Post = model<IPost>('Post', postSchema);
