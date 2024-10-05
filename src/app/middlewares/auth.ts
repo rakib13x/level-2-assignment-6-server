@@ -14,33 +14,38 @@ const auth = (...requiredRoles: TUserRole[]) => {
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       throw new AppError(
         httpStatus.UNAUTHORIZED,
-        'You have no access to this route',
+        'You have no access to this route'
       );
     }
 
     const token = authHeader.split(' ')[1];
 
     try {
+      // Decode JWT token
       const decoded = jwt.verify(
         token,
-        config.jwt_access_secret as string,
+        config.jwt_access_secret as string
       ) as JwtPayload;
-      const { _id, role, userEmail } = decoded;
 
+      // Extract user details from token
+      const { _id, role, userEmail, customerName, customerPhone } = decoded;
+
+      // Ensure the user exists in the database
       const user = await User.isUserExistsByEmail(userEmail);
-
       if (!user) {
         throw new AppError(httpStatus.NOT_FOUND, 'This user is not found!');
       }
 
+      // Check if the user has the required role
       if (requiredRoles.length && !requiredRoles.includes(role)) {
         throw new AppError(
           httpStatus.UNAUTHORIZED,
-          'You have no access to this route',
+          'You have no access to this route'
         );
       }
 
-      req.user = { _id, role, userEmail };
+      // Attach user details to the request object
+      req.user = { _id, role, userEmail, customerName, customerPhone };
       next();
     } catch (error) {
       if (error instanceof jwt.TokenExpiredError) {
@@ -50,7 +55,7 @@ const auth = (...requiredRoles: TUserRole[]) => {
       }
       throw new AppError(
         httpStatus.UNAUTHORIZED,
-        'You have no access to this route',
+        'You have no access to this route'
       );
     }
   });
